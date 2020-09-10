@@ -1,5 +1,5 @@
 {
-    "model_name": "ppta_dr2_20200908",
+    "model_name": "20200908_gwb_fixgamma",
     "universal": {},
     "common_signals": {
         "gwb": "fixed_gamma"
