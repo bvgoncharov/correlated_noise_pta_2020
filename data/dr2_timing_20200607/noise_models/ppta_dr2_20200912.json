@@ -1,9 +1,7 @@
 {
-    "model_name": "20200908_gwb_fixgamma",
+    "model_name": "20200912",
     "universal": {},
-    "common_signals": {
-        "gwb": "hd_fixed_gamma"
-    },
+    "common_signals": {},
     "J0437-4715":
     {
         "efac": "by_backend",

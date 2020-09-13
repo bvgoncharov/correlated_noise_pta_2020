@@ -31,7 +31,6 @@ if params.sampler == 'ptmcmcsampler':
                                   if key in ptmcmc_sample_kwargs}
     del upd_sample_kwargs['Niter']
     del upd_sample_kwargs['p0']
-
     sampler.sample(x0, N, **upd_sample_kwargs)
 else:
     priors = bilby_warp.get_bilby_prior_dict(pta[0])

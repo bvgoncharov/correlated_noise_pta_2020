@@ -1,8 +1,9 @@
 {
-    "model_name": "20200908_gwb_fixgamma",
+    "model_name": "20200910_cpl_fixgam_be",
     "universal": {},
     "common_signals": {
-        "gwb": "hd_fixed_gamma"
+        "gwb": "fixed_gamma",
+        "bayes_ephem": "default"
     },
     "J0437-4715":
     {
