@@ -1,3 +1,4 @@
+paramfile_label: v1
 datadir: /fred/oz002/bgoncharov/correlated_noise_pta_2020/data/dr2_timing_20200607/
 out: /fred/oz002/bgoncharov/correlated_noise_pta_2020_out/dr2_timing_20200607/
 overwrite: True

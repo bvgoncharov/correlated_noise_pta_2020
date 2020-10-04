@@ -52,7 +52,6 @@
     {
         "efac": "by_backend",
         "equad": "by_backend",
-        "spin_noise": "powerlaw",
         "dm_noise": "powerlaw"
     },
     "J1045-4509":

@@ -1,2 +1,2 @@
-Noise files after PE with the correct noise models.
-Bug: J1713's noise file produces log likelihood of -inf, when white noise parameters are fixed. Perhaps I did not sample long enough...
+Original noise files after PE with the correct noise models, except for:
+ - J1713+0747. Noise file has been updated to solve a log-likelihood=-inf problem. The original noise file is located in "originals/".

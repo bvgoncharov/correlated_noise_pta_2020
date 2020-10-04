@@ -2,10 +2,10 @@
 #SBATCH --job-name=ppta_ptmcmc_pe
 #SBATCH --output=/fred/oz002/bgoncharov/correlated_noise_logs/ppta_ptmcmc_pe_%A_%a.out
 #SBATCH --ntasks=2
-#SBATCH --time=2-0
+#SBATCH --time=1-0
 #SBATCH --mem-per-cpu=2G
 #SBATCH --tmp=2G
-#SBATCH --array=1-12,14-19,21-25
+#SBATCH --array=3,9,18,21
 
 module load numpy/1.16.3-python-2.7.14
 

@@ -3,11 +3,16 @@
 #SBATCH --output=/fred/oz002/bgoncharov/correlated_noise_logs/ppta_ptmcmc_pe_%A_%a.out
 #SBATCH --ntasks=4
 #SBATCH --time=2-0
-#SBATCH --mem-per-cpu=3G
-#SBATCH --tmp=3G
-#SBATCH --array=0,13,20
+#SBATCH --mem-per-cpu=4G
+#SBATCH --tmp=4G
+#SBATCH --array=0
 
-module load numpy/1.16.3-python-2.7.14
+pyv="$(python -c 'import sys; print(sys.version_info[0])')"
+if [ "$pyv" == 2 ]
+then
+    echo "$pyv"
+    module load numpy/1.16.3-python-2.7.14
+fi
 
 srun echo $TEMPO2
 srun echo $TEMPO2_CLOCK_DIR

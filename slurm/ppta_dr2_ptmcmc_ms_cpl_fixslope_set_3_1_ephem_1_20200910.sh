@@ -3,7 +3,7 @@
 #SBATCH --output=/fred/oz002/bgoncharov/correlated_noise_logs/ppta_ptmcmc_ms_cpl_fixslope_set_3_1_ephem_1_%A_%a.out
 #SBATCH --ntasks=4
 #SBATCH --time=2-0
-#SBATCH --mem-per-cpu=3G
+#SBATCH --mem-per-cpu=2G
 #SBATCH --tmp=4G
 #SBATCH --array=0
 
