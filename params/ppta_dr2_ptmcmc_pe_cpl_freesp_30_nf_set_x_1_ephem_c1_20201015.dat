@@ -1,0 +1,17 @@
+paramfile_label: x1psr
+datadir: /fred/oz002/bgoncharov/correlated_noise_pta_2020/data/dr2_timing_20200607/
+out: /fred/oz002/bgoncharov/correlated_noise_pta_2020_out/dr2_timing_20200607/
+overwrite: True
+array_analysis: True
+psrlist: /fred/oz002/bgoncharov/correlated_noise_pta_2020/params/pulsar_set_x_1.dat
+sampler: ptmcmcsampler
+SCAMweight: 30
+AMweight: 15
+DEweight: 50
+nsamp: 10000000
+efac: -1
+equad: -1
+ecorr: -1
+noisefiles: /fred/oz002/bgoncharov/correlated_noise_pta_2020/data/dr2_timing_20200607/start_noisefiles/
+{0}
+noise_model_file: /fred/oz002/bgoncharov/correlated_noise_pta_2020/data/dr2_timing_20200607/noise_models/ppta_dr2_cpl_freesp_30_nfreqs_eph_c1_20201015.json

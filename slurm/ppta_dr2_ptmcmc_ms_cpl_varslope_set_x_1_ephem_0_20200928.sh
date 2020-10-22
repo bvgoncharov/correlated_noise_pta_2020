@@ -2,7 +2,7 @@
 #SBATCH --job-name=ppta_ptmcmc_ms_cpl_varslope_set_x_1_ephem_0
 #SBATCH --output=/fred/oz002/bgoncharov/correlated_noise_logs/ppta_ptmcmc_ms_cpl_varslope_set_x_1_ephem_0_%A_%a.out
 #SBATCH --ntasks=4
-#SBATCH --time=1-0
+#SBATCH --time=0-20
 #SBATCH --mem-per-cpu=6G
 #SBATCH --tmp=8G
 #SBATCH --array=0

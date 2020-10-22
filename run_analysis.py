@@ -26,9 +26,12 @@ if params.sampler == 'ptmcmcsampler':
     sampler = super_model.setup_sampler(resume=True, outdir=params.output_dir)
     N = params.nsamp
     x0 = super_model.initial_sample()
-    noisedict = get_noise_dict(psrlist=[pp.name for pp in params.psrs],
-                               noisefiles=params.noisefiles)
-    x0 = super_model.informed_sample(noisedict)
+    try:
+      noisedict = get_noise_dict(psrlist=[pp.name for pp in params.psrs],
+                                 noisefiles=params.noisefiles)
+      x0 = super_model.informed_sample(noisedict)
+    except:
+      print('Informed sample is not possible')
 
     # Remove extra kwargs that Bilby took from PTSampler module, not ".sample"
     ptmcmc_sample_kwargs = inspect.getargspec(sampler.sample).args

@@ -167,9 +167,9 @@ class PPTADR2Models(StandardModels):
       ekw['d_mars_mass'] = parameter.Normal(0, 3.23e-10)('d_mar_mass')
     if "mar_el" in option:
       if isinstance(option, dict):
-        ekw['mar_orb_elements'] = UniformMask(-2., 2., option['mar_el'])('mar_oe')
+        ekw['mar_orb_elements'] = UniformMask(-5., 5., option['mar_el'])('mar_oe')
       else:
-        ekw['mar_orb_elements'] = parameter.Uniform(-2., 2., size=6)('mar_oe')
+        ekw['mar_orb_elements'] = parameter.Uniform(-5., 5., size=6)('mar_oe')
 
     if "jup_m" in option or "outer" in option or "default" in option:
       ekw['d_jupiter_mass'] = parameter.Normal(0, 1.54976690e-11)\
@@ -186,9 +186,9 @@ class PPTADR2Models(StandardModels):
       ekw['d_saturn_mass'] = parameter.Normal(0, 8.17306184e-12)('d_sat_mass')
     if "sat_el" in option or "outer" in option:
       if isinstance(option, dict):
-        ekw['sat_orb_elements'] = UniformMask(-2., 2., option['sat_el'])('sat_oe')
+        ekw['sat_orb_elements'] = UniformMask(-5., 5., option['sat_el'])('sat_oe')
       else:
-        ekw['sat_orb_elements'] = parameter.Uniform(-2., 2., size=6)('sat_oe')
+        ekw['sat_orb_elements'] = parameter.Uniform(-5., 5., size=6)('sat_oe')
 
     if "ura_m" in option or "outer" in option or "default" in option:
       ekw['d_uranus_mass'] = parameter.Normal(0, 5.71923361e-11)('d_ura_mass')
@@ -308,6 +308,9 @@ def by_B_1020CM(flags):
 #           scipy.stats.uniform.pdf(value, pmin, pmax - pmin),
 #           mask=~mask, fill_value=1.,).filled()
 
+def deltafunc(val):
+    return ~bool(val)
+
 def UniformMaskSampler(pmin, pmax, mask, size=None):
     """Sampling function for Uniform parameters."""
     return np.ma.array(
@@ -319,12 +322,23 @@ def UniformMask(pmin, pmax, mask):
     Similar to enterprise.signals.parameter.Uniform, but with an option to
     make some of the iterable sub-parameters constant, using a mask.
     """
-    warnings.warn("Make sure that parameters are fixed at values, which are \
-                   within the uniform prior range: otherwise \
-                   parameter.UniformPrior will yield incorrect probability.")
+    #warnings.warn("Make sure that parameters are fixed at values, which are \
+    #               within the uniform prior range: otherwise \
+    #               parameter.UniformPrior will yield incorrect probability.")
+
+    def UniformMaskPrior(value, pmin, pmax, mask=mask):
+        """Prior function for Uniform parameters."""
+        output = scipy.stats.uniform.pdf(value, pmin, pmax - pmin)
+        fill_val_delta = (~value[~mask].astype(bool)).astype(float)
+        output[~mask] = fill_val_delta
+        return output
+    #return np.ma.array(
+    #       scipy.stats.uniform.pdf(value, pmin, pmax - pmin),
+    #       mask=~mask, fill_value=fill_val_delta,).filled()
+
     class UniformMask(parameter.Parameter):
         _size = len(mask) #size
-        _prior = parameter.Function(parameter.UniformPrior, pmin=pmin, 
+        _prior = parameter.Function(UniformMaskPrior, pmin=pmin, 
                                     pmax=pmax, mask=mask)
         _sampler = staticmethod(UniformMaskSampler)
         _typename = parameter._argrepr("UniformMask", pmin=pmin, pmax=pmax,

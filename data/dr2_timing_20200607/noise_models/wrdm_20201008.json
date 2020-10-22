@@ -1,0 +1,135 @@
+{
+    "model_name": "20201008_wrdm",
+    "universal": {
+        "efac": "by_backend",
+        "equad": "by_backend",
+        "spin_noise": "powerlaw",
+        "dm_noise": "powerlaw"
+    },
+    "common_signals": {},
+    "J0437-4715":
+    {
+        "efac": "by_backend",
+        "equad": "by_backend",
+        "spin_noise": "powerlaw",
+        "dm_noise": "powerlaw",
+        "j0437_event": "exp_dip",
+        "ecorr": "by_backend"
+    },
+    "J0613-0200":
+    {
+        "efac": "by_backend",
+        "equad": "by_backend",
+        "spin_noise": "powerlaw",
+        "dm_noise": "powerlaw",
+        "ecorr": "by_backend",
+        "dm_annual": "default"
+    },
+    "J1017-7156":
+    {
+        "efac": "by_backend",
+        "equad": "by_backend",
+        "spin_noise": "powerlaw",
+        "dm_noise": "powerlaw",
+        "ecorr": "by_backend"
+    },
+    "J1022+1001":
+    {
+        "efac": "by_backend",
+        "equad": "by_backend",
+        "spin_noise": "powerlaw",
+        "dm_noise": "powerlaw",
+        "ecorr": "by_backend"
+    },
+    "J1446-4701":
+    {
+        "efac": "by_backend",
+        "equad": "by_backend",
+        "spin_noise": "powerlaw",
+        "dm_noise": "powerlaw",
+        "ecorr": "by_backend"
+    },
+    "J1600-3053":
+    {
+        "efac": "by_backend",
+        "equad": "by_backend",
+        "spin_noise": "powerlaw",
+        "dm_noise": "powerlaw",
+        "ecorr": "by_backend"
+    },
+    "J1603-7202":
+    {
+        "efac": "by_backend",
+        "equad": "by_backend",
+        "spin_noise": "powerlaw",
+        "dm_noise": "powerlaw",
+        "ecorr": "by_backend"
+    },
+    "J1643-1224":
+    {
+        "efac": "by_backend",
+        "equad": "by_backend",
+        "spin_noise": "powerlaw",
+        "dm_noise": "powerlaw",
+        "j1643_event": "exp_dip"
+    },
+    "J1713+0747":
+    {
+        "efac": "by_backend",
+        "equad": "by_backend",
+        "spin_noise": "powerlaw",
+        "dm_noise": "powerlaw",
+        "ecorr": "by_backend",
+        "j1713_event_1": "exp_dip",
+        "j1713_event_2": "exp_dip"
+    },
+    "J1744-1134":
+    {
+        "efac": "by_backend",
+        "equad": "by_backend",
+        "spin_noise": "powerlaw",
+        "dm_noise": "powerlaw",
+        "ecorr": "by_backend"
+    },
+    "J1824-2452A":
+    {
+        "efac": "by_backend",
+        "equad": "by_backend",
+        "spin_noise": "powerlaw",
+        "dm_noise": "powerlaw",
+        "ecorr": "by_backend"
+    },
+    "J1909-3744":
+    {
+        "efac": "by_backend",
+        "equad": "by_backend",
+        "spin_noise": "powerlaw",
+        "dm_noise": "powerlaw",
+        "ecorr": "by_backend"
+    },
+    "J1939+2134":
+    {
+        "efac": "by_backend",
+        "equad": "by_backend",
+        "spin_noise": "powerlaw",
+        "dm_noise": "powerlaw",
+        "ecorr": "by_backend"
+    },
+    "J2145-0750":
+    {
+        "efac": "by_backend",
+        "equad": "by_backend",
+        "spin_noise": "powerlaw",
+        "dm_noise": "powerlaw",
+        "ecorr": "by_backend",
+        "j2145_event": "exp_dip"
+    },
+    "J2241-5236":
+    {
+        "efac": "by_backend",
+        "equad": "by_backend",
+        "spin_noise": "powerlaw",
+        "dm_noise": "powerlaw",
+        "ecorr": "by_backend"
+    }
+}

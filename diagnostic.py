@@ -34,8 +34,11 @@ if params.sampler == 'ptmcmcsampler':
     del upd_sample_kwargs['Niter']
     del upd_sample_kwargs['p0']
 
-    noisedict = get_noise_dict(psrlist=[p.name for p in params.psrs],noisefiles=params.noisefiles)
-    x0 = super_model.informed_sample(noisedict)
+    try:
+      noisedict = get_noise_dict(psrlist=[p.name for p in params.psrs],noisefiles=params.noisefiles)
+      x0 = super_model.informed_sample(noisedict)
+    except:
+      print('Informed sample is not possible')
     super_model.get_lnlikelihood(x0)
     #xx = dict()
     #import ipdb; ipdb.set_trace()
