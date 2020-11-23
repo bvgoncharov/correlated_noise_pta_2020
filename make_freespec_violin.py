@@ -14,6 +14,8 @@ from enterprise_warp.results import parse_commandline
 class ViolinFreespecResult(EnterpriseWarpResult):
   def __init__(self, opts):
     super(ViolinFreespecResult, self).__init__(opts)
+    self.inv_earth_orb_period = (365.25*24.*60.*60)**(-1)
+    self.inv_mar_orb_period = (687.*24.*60.*60)**(-1)
 
   def main_pipeline(self):
     for psr_dir in self.psr_dirs:
@@ -51,6 +53,7 @@ class ViolinFreespecResult(EnterpriseWarpResult):
 
     fig, (ax1) = plt.subplots(nrows=1, ncols=1)
     ax1.violinplot(chain_plot, positions=freqs, widths=df, showextrema=False)
+    ax1.axvline(x=self.inv_earth_orb_period, label='$\mathrm{yr}^{-1}$')
     ax1.set_xscale('log')
     plt.xlabel('Frequency, Hz')
     plt.ylabel('$\\log_{10}\\rho\\mathrm{, }\\log_{10}\\mathrm{s}$')

@@ -26,7 +26,8 @@ class PPTADR2Models(StandardModels):
       "event_j1713_1_t0": [54500., 54900.],
       "event_j1713_2_t0": [57500., 57520.],
       "event_j2145_t0": [56100., 56500.],
-      "event_j1603_t0": [53710., 54070.]
+      "event_j1603_t0": [53710., 54070.],
+      "f2_range": 1e-6,
     })
 
   def dm_annual(self, option="default"):
@@ -210,6 +211,20 @@ class PPTADR2Models(StandardModels):
     eph = deterministic_signals.PhysicalEphemerisSignal(**ekw)
     return eph
 
+  def f2_signal(self,option="uniform"):
+    """
+    F2 parameter
+    """
+    with open(self.psr.parfile_name, "r") as parf:
+      for line in parf:
+        if "PEPOCH" in line:
+          self.psr.pepoch = float(line.split()[1]) * 24 * 60 * 60
+          print("PEPOCH extraction: ", self.psr.pepoch)
+    f2_coeff = parameter.Uniform(-self.params.f2_range, self.params.f2_range)('f2')
+    wf = f2_waveform(coeff = f2_coeff)
+    f2_signal = deterministic_signals.Deterministic(wf)
+    return f2_signal
+
 # PPTA DR2 signal models
 
 @signal_base.function
@@ -228,6 +243,14 @@ def chrom_gaussian_bump(toas, freqs, log10_Amp=-2.5, sign_param=1.0,
     sigma *= const.day
     wf = 10**log10_Amp * np.exp(-(toas - t0)**2/2/sigma**2)
     return np.sign(sign_param) * wf * (1400 / freqs) ** idx
+
+@signal_base.function
+def f2_waveform(toas, pepoch, coeff=1e-6):
+    """
+    Modelling error in F2 timing model parameter.
+    This error results in cubic trend in timing residuals.
+    """
+    return coeff * ((toas - pepoch)/const.yr)**3
 
 # PPTA DR2 signal wrappers
 

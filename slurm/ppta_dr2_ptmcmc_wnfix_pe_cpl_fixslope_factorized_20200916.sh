@@ -2,12 +2,17 @@
 #SBATCH --job-name=ppta_ptmcmc_wnfix_pe_cpl_fixslope_factorized
 #SBATCH --output=/fred/oz002/bgoncharov/correlated_noise_logs/ppta_ptmcmc_wnfix_pe_cpl_fixslope_factorized_%A_%a.out
 #SBATCH --ntasks=2
-#SBATCH --time=1-0
+#SBATCH --time=0-23
 #SBATCH --mem-per-cpu=2G
 #SBATCH --tmp=2G
-#SBATCH --array=9,18
+#SBATCH --array=19
 
-module load numpy/1.16.3-python-2.7.14
+pyv="$(python -c 'import sys; print(sys.version_info[0])')"
+if [ "$pyv" == 2 ]
+then
+    echo "$pyv"
+    module load numpy/1.16.3-python-2.7.14
+fi
 
 srun echo $TEMPO2
 srun echo $TEMPO2_CLOCK_DIR

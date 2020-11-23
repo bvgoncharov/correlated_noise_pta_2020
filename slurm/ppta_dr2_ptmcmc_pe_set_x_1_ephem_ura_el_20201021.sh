@@ -3,8 +3,8 @@
 #SBATCH --output=/fred/oz002/bgoncharov/correlated_noise_logs/ppta_ptmcmc_pe_set_x_1_ephem_ura_el_%A_%a.out
 #SBATCH --ntasks=4
 #SBATCH --time=0-23
-#SBATCH --mem-per-cpu=3G
-#SBATCH --tmp=8G
+#SBATCH --mem-per-cpu=5G
+#SBATCH --tmp=10G
 #SBATCH --array=0
 
 pyv="$(python -c 'import sys; print(sys.version_info[0])')"

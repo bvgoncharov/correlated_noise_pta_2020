@@ -5,7 +5,7 @@
 #SBATCH --time=2-0
 #SBATCH --mem-per-cpu=2G
 #SBATCH --tmp=2G
-#SBATCH --array=7,21
+#SBATCH --array=18
 
 module load numpy/1.16.3-python-2.7.14
 

@@ -1,6 +1,7 @@
 #!/bin/python
 
 import numpy as np
+import pandas as pd
 import sys
 import os
 import bilby
@@ -23,7 +24,19 @@ if params.sampler == 'ptmcmcsampler':
     super_model = hypermodel.HyperModel(pta)
     print('Super model parameters: ', super_model.params)
     print('Output directory: ', params.output_dir)
-    sampler = super_model.setup_sampler(resume=True, outdir=params.output_dir)
+    # Filling in PTMCMCSampler jump covariance matrix
+    if params.mcmc_covm is not None:
+      ndim = len(super_model.param_names)
+      identity_covm = np.diag(np.ones(ndim) * 1**2)
+      identity_covm_df = pd.DataFrame(identity_covm, \
+                                      index=super_model.param_names, \
+                                      columns=super_model.param_names)
+      covm = params.mcmc_covm.combine_first(identity_covm_df)
+      identity_covm_df.update(covm)
+      covm = np.array(identity_covm_df)
+    else:
+      covm = None
+    sampler = super_model.setup_sampler(resume=True, outdir=params.output_dir, initial_cov=covm)
     N = params.nsamp
     x0 = super_model.initial_sample()
 
@@ -37,6 +50,13 @@ if params.sampler == 'ptmcmcsampler':
     try:
       noisedict = get_noise_dict(psrlist=[p.name for p in params.psrs],noisefiles=params.noisefiles)
       x0 = super_model.informed_sample(noisedict)
+      # Start ORF inference with zero correlation:
+      if 'corr_coeff_0' in super_model.param_names and \
+         len(x0)==len(super_model.param_names):
+        print('Starting sampling free ORF with zeros')
+        orf_mask = [True if 'corr_coeff' in prn else False \
+                    for prn in super_model.param_names]
+        x0[orf_mask] = 0.
     except:
       print('Informed sample is not possible')
     super_model.get_lnlikelihood(x0)
