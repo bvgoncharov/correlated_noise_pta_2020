@@ -95,7 +95,7 @@ class FactorizedPosteriorResult(EnterpriseWarpResult):
         self._get_par_mask()
         if np.sum(self.par_mask) != 1:
           message = 'Here, --par must correspond only to one parameter. \
-                     Current --par: ' + ','.join(opts.par)
+                     Current --par: ' + ','.join(self.opts.par)
           raise ValueError(message)
   
         self.get_distribution_kde()
@@ -149,12 +149,14 @@ class FactorizedPosteriorResult(EnterpriseWarpResult):
                                   x=self.x_vals.T)
       self.save_posterior()
 
-  def make_figure(self, ax, label='Factorized posterior'):
+  def make_figure(self, ax, label='Factorized posterior', colorpsr='grey', 
+                  colorall='dodgerblue', lwpsr=1, lwall=2, alphapsr=0.1,
+                  alphaall=1.0):
     for psr_dir in self.kde.keys():
-      fobj = ax.plot(self.x_vals, np.exp(self.log_prob[psr_dir]), alpha=0.1,
-                      color='grey', linewidth=2)
-    fobj += ax.plot(self.x_vals, self.prob_factorized_norm, color='dodgerblue',
-                    label=label)
+      fobj = ax.plot(self.x_vals, np.exp(self.log_prob[psr_dir]),
+                     alpha=alphapsr, color=colorpsr, linewidth=lwpsr)
+    fobj += ax.plot(self.x_vals, self.prob_factorized_norm, color=colorall,
+                    alpha=alphaall, linewidth=lwall, label=label)
     return fobj
 
   def plot_results(self):

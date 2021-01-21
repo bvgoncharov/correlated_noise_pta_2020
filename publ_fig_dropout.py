@@ -41,10 +41,20 @@ def main():
   """
   opts = parse_commandline()
   output_directory = '/home/bgonchar/correlated_noise_pta_2020/publication_figures/'
-  psrs_set = '/home/bgonchar/correlated_noise_pta_2020/params/pulsar_set_x_1.dat'
+  #psrs_set = '/home/bgonchar/correlated_noise_pta_2020/params/pulsar_set_x_1.dat'
+  psrs_set = '/home/bgonchar/correlated_noise_pta_2020/params/pulsar_set_all.dat'
+
+  plt.rcParams.update({
+    "text.usetex": True,
+    "font.family": "serif",
+    #"font.serif": ["Palatino"],
+  })
+  font = {'family' : 'serif',
+          'size'   : 12}
 
   # Factorized results per pulsar
-  opts.result = '/home/bgonchar/correlated_noise_pta_2020/params/ppta_dr2_ptmcmc_wnfix_pe_common_pl_factorized_20200916.dat'
+  #opts.result = '/home/bgonchar/correlated_noise_pta_2020/params/ppta_dr2_ptmcmc_wnfix_pe_common_pl_factorized_20200916.dat'
+  opts.result ='/home/bgonchar/correlated_noise_pta_2020/params/ppta_dr2_ptmcmc_wnfix_pe_common_pl_factorized_30_nf_20201218.dat'
   result_obj = FactorizedPosteriorResult(opts, psrs_set=psrs_set)
   result_obj.main_pipeline([-20., -6.])
   bf_k = result_obj.sd_bf
@@ -52,7 +62,8 @@ def main():
   log_prob_k = result_obj.log_prob
 
   # Factorized results for all PSRs in set except each one, one by one
-  opts.result = '/home/bgonchar/correlated_noise_pta_2020/params/ppta_dr2_ptmcmc_pe_cpl_set_x_1_factorized_dropout_20201105.dat'
+  #opts.result = '/home/bgonchar/correlated_noise_pta_2020/params/ppta_dr2_ptmcmc_pe_cpl_set_x_1_factorized_dropout_20201105.dat'
+  opts.result = '/home/bgonchar/correlated_noise_pta_2020/params/ppta_dr2_ptmcmc_pe_cpl_30_nf_set_all_factorized_dropout_20201219.dat'
   result_obj = FactorizedPosteriorResult(opts, psrs_set=psrs_set)
   result_obj.main_pipeline([-20., -6.])
   log_prob_jnek = result_obj.log_prob
@@ -64,19 +75,24 @@ def main():
   dropout_vals = list()
   for kk, vv in sorted(dropout.items(), key=lambda x: x[1], reverse=True):
     dropout_vals.append(vv[0])
-    dropout_keys.append(kk.split('_')[1])
+    dropout_keys.append(kk.split('_')[1].replace('-','--'))
   #dropout_vals = [dd[0] for dd in dropout.values()]
   #dropout_keys = [kk for kk in dropout.keys()]
 
   dummy_xvals = np.linspace(0,1, len(dropout_vals))
-  #fig = plt.figure()
-  #ax1 = fig.add_subplot(111)
-  plt.scatter(dummy_xvals, dropout_vals, s=5, c="green")
+  fig = plt.figure()
+  ax1 = fig.add_subplot(111)
+  plt.grid(b=None, axis='y')
+  plt.scatter(dummy_xvals, dropout_vals, s=25, c="#1976D2")
   plt.xticks(dummy_xvals, dropout_keys, rotation='vertical')
   #ax1.set_xticklabels(dropout_vals)
   plt.yscale("log")
-  plt.xlabel("PSR")
-  plt.ylabel("Dropout factor")
+  #plt.xlabel("PSR")
+  ax1.set_xlabel('PSR', fontdict=font)
+  #plt.ylabel("Dropout factor")
+  ax1.set_ylabel('Dropout factor', fontdict=font)
+  ax1.tick_params(axis='y', labelsize = font['size'])
+  ax1.tick_params(axis='x', labelsize = font['size'])
   plt.tight_layout()
   plt.savefig(output_directory + 'dropout.pdf')
   plt.close()

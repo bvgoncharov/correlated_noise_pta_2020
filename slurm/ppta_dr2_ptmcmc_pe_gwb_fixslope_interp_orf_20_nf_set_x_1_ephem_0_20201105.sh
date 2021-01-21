@@ -2,7 +2,7 @@
 #SBATCH --job-name=ppta_ptmcmc_pe_gwb_fixsl_intorf_20nf_setx1_eph0
 #SBATCH --output=/fred/oz002/bgoncharov/correlated_noise_logs/ppta_ptmcmc_pe_gwb_fixslope_inter_orf_20nf_set_x_1_ephem_0_%A_%a.out
 #SBATCH --ntasks=4
-#SBATCH --time=1-11
+#SBATCH --time=1-21
 #SBATCH --mem-per-cpu=7G
 #SBATCH --tmp=12G
 #SBATCH --array=0

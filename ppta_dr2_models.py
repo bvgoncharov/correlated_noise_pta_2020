@@ -6,12 +6,16 @@ from enterprise.signals import signal_base
 from enterprise_extensions import chromatic
 import enterprise.signals.parameter as parameter
 import enterprise.signals.gp_signals as gp_signals
+from enterprise.signals import gp_priors
 import enterprise.signals.deterministic_signals as deterministic_signals
 import enterprise.signals.selections as selections
 import enterprise.signals.utils as utils
 
 from enterprise_warp.enterprise_models import StandardModels
 from enterprise_warp.enterprise_models import selection_factory
+from enterprise_warp.enterprise_models import powerlaw_bpl
+
+from scramble_basis import FourierBasisCommonGP as FourierBasisSkyscrambledGP
 
 class PPTADR2Models(StandardModels):
   """
@@ -22,6 +26,7 @@ class PPTADR2Models(StandardModels):
     self.priors.update({
       "fd_sys_slope_range": 1e-7,
       "event_j0437_t0": [57050., 57150.],
+      "event_j0437_tau_10p": [5., 100.],
       "event_j1643_t0": [57050., 57150.],
       "event_j1713_1_t0": [54500., 54900.],
       "event_j1713_2_t0": [57500., 57520.],
@@ -69,8 +74,9 @@ class PPTADR2Models(StandardModels):
 
   def j0437_event(self, option="exp_dip"):
     return dm_exponential_dip(self.params.event_j0437_t0[0],
-                              self.params.event_j0437_t0[1],
-                              idx="vary", tau_min_10_pow=5, tau_max_10_pow=100)
+                              self.params.event_j0437_t0[1], idx="vary",
+                              tau_min_10_pow=self.params.event_j0437_tau_10p[0],
+                              tau_max_10_pow=self.params.event_j0437_tau_10p[1])
   
   def j1713_event_1(self, option="exp_dip"):
     return dm_exponential_dip(self.params.event_j1713_1_t0[0],
@@ -108,13 +114,27 @@ class PPTADR2Models(StandardModels):
       log10_A = parameter.Uniform(self.params.syn_lgA[0],self.params.syn_lgA[1])
       gamma = parameter.Uniform(self.params.syn_gamma[0],\
                                 self.params.syn_gamma[1])
-      pl = utils.powerlaw(log10_A=log10_A, gamma=gamma, \
+
+      if "turnover" in paired_band_term:
+        fc = parameter.Uniform(self.params.sn_fc[0],self.params.sn_fc[1])
+        pl = powerlaw_bpl(log10_A=log10_A, gamma=gamma, fc=fc,
                           components=self.params.red_general_nfouriercomp)
-  
+        option_split = paired_band_term.split("_")
+        del option_split[option_split.index("turnover")]
+        paired_band_term = "_".join(option_split)
+      else:
+        pl = utils.powerlaw(log10_A=log10_A, gamma=gamma, \
+                          components=self.params.red_general_nfouriercomp)
+
+      if "nfreqs" not in paired_band_term:
+        setattr(self, paired_band_term, globals()[paired_band_term])
+      paired_band_term, nfreqs = self.option_nfreqs(paired_band_term, \
+                                      sel_func_name=paired_band_term)
       setattr(self, paired_band_term, globals()[paired_band_term])
-      nfreqs = self.determine_nfreqs(sel_func_name=paired_band_term)
+
+      tspan = self.determine_tspan(sel_func_name=paired_band_term)
   
-      pbn_term = gp_signals.FourierBasisGP(spectrum=pl, Tspan=self.params.Tspan,
+      pbn_term = gp_signals.FourierBasisGP(spectrum=pl, Tspan=tspan,
                                         name='band_noise_' + paired_band_term,
                                         selection=selections.Selection( \
                                         self.__dict__[paired_band_term] ),
@@ -148,7 +168,7 @@ class PPTADR2Models(StandardModels):
                                                  ('frame_drift_rate')
 
     if "mer_m" in option or "inner" in option:
-      ekw['d_mercury_mass'] = parameter.Normal(0, 1.66-10)('d_mer_mass')
+      ekw['d_mercury_mass'] = parameter.Normal(0, 1.66e-10)('d_mer_mass')
     if "mer_el" in option:
       if isinstance(option, dict):
         ekw['mer_orb_elements'] = UniformMask(-0.5, 0.5, option['mer_el'])\
@@ -176,7 +196,7 @@ class PPTADR2Models(StandardModels):
       ekw['d_jupiter_mass'] = parameter.Normal(0, 1.54976690e-11)\
                                               ('d_jup_mass')
     if "jup_el" in option or "outer" in option or "default" in option:
-      if isinstance(option, dict):
+      if isinstance(option, dict) and type(option['jup_el']) is list:
         ekw['jup_orb_elements'] = UniformMask(-0.05, 0.05, option['jup_el'])\
                                              ('jup_oe')
       else:
@@ -225,6 +245,128 @@ class PPTADR2Models(StandardModels):
     f2_signal = deterministic_signals.Deterministic(wf)
     return f2_signal
 
+  def gwb(self,option="hd_vary_gamma"):
+    """
+    Spatially-correlated quadrupole signal from the nanohertz stochastic
+    gravitational-wave background.
+    """
+    name = 'gw'
+    optsp = option.split('+')
+    for option in optsp:
+      if "_nfreqs" in option:
+        split_idx_nfreqs = option.split('_').index('nfreqs') - 1
+        nfreqs = int(option.split('_')[split_idx_nfreqs])
+      else:
+        nfreqs = self.determine_nfreqs(sel_func_name=None, common_signal=True)
+      print('Number of Fourier frequencies for the GWB/CPL signal: ', nfreqs)
+
+      if "_gamma" in option:
+        amp_name = '{}_log10_A'.format(name)
+        if (len(optsp) > 1 and 'hd' in option) or ('namehd' in option):
+          amp_name += '_hd'
+        elif (len(optsp) > 1 and ('varorf' in option or \
+                                  'interporf' in option)) \
+                                  or ('nameorf' in option):
+          amp_name += '_orf'
+        if self.params.gwb_lgA_prior == "uniform":
+          gwb_log10_A = parameter.Uniform(self.params.gwb_lgA[0],
+                                          self.params.gwb_lgA[1])(amp_name)
+        elif self.params.gwb_lgA_prior == "linexp":
+          gwb_log10_A = parameter.LinearExp(self.params.gwb_lgA[0],
+                                            self.params.gwb_lgA[1])(amp_name)
+
+        gam_name = '{}_gamma'.format(name)
+        if "vary_gamma" in option:
+          gwb_gamma = parameter.Uniform(self.params.gwb_gamma[0],
+                                        self.params.gwb_gamma[1])(gam_name)
+        elif "fixed_gamma" in option:
+          gwb_gamma = parameter.Constant(4.33)(gam_name)
+        else:
+          split_idx_gamma = option.split('_').index('gamma') - 1
+          gamma_val = float(option.split('_')[split_idx_gamma])
+          gwb_gamma = parameter.Constant(gamma_val)(gam_name)
+        gwb_pl = utils.powerlaw(log10_A=gwb_log10_A, gamma=gwb_gamma)
+      elif "freesp" in option:
+        amp_name = '{}_log10_rho'.format(name)
+        log10_rho = parameter.Uniform(self.params.gwb_lgrho[0],
+                                      self.params.gwb_lgrho[1],
+                                      size=nfreqs)(amp_name)
+        gwb_pl = gp_priors.free_spectrum(log10_rho=log10_rho)
+
+      if "hd" in option:
+        print('Adding HD ORF')
+        if "noauto" in option:
+          print('Removing auto-correlation')
+          orf = hd_orf_noauto()
+        else:
+          orf = utils.hd_orf()
+        if len(optsp) > 1 or 'namehd' in option:
+          gwname = 'gwb_hd'
+        else:
+          gwname = 'gwb'
+        gwb = gp_signals.FourierBasisCommonGP(gwb_pl, orf, components=nfreqs,
+                                              name=gwname,
+                                              Tspan=self.params.Tspan)
+      elif "mono" in option:
+        print('Adding monopole ORF')
+        orf = utils.monopole_orf()
+        gwb = gp_signals.FourierBasisCommonGP(gwb_pl, orf, components=nfreqs,
+                                              name='gwb',
+                                              Tspan=self.params.Tspan)
+      elif "dipo" in option:
+        print('Adding dipole ORF')
+        orf = utils.dipole_orf()
+        gwb = gp_signals.FourierBasisCommonGP(gwb_pl, orf, components=nfreqs,
+                                              name='gwb',
+                                              Tspan=self.params.Tspan)
+      elif "halfdip" in option:
+        print('Adding dipole/2 ORF')
+        orf = halfdip_orf()
+        gwb = gp_signals.FourierBasisCommonGP(gwb_pl, orf, components=nfreqs,
+                                              name='gwb',
+                                              Tspan=self.params.Tspan)
+      elif "varorf" in option:
+        if len(optsp) > 1 or 'nameorf' in option:
+          gwname = 'gwb_orf'
+        else:
+          gwname = 'gwb'
+        corr_coeff = parameter.Uniform(-1., 1., size=7)('corr_coeff')
+        if "noauto" in option:
+          orf = infer_orf_noauto(corr_coeff=corr_coeff)
+        else:
+          orf = infer_orf(corr_coeff=corr_coeff)
+        gwb = gp_signals.FourierBasisCommonGP(gwb_pl, orf, components=nfreqs,
+                                              name=gwname,
+                                              Tspan=self.params.Tspan)
+      elif "interporf" in option:
+        print("Adding numpy-interpolated free ORF")
+        if len(optsp) > 1 or 'nameorf' in option:
+          gwname = 'gwb_orf'
+        else:
+          gwname = 'gwb'
+        corr_coeff = parameter.Uniform(-1., 1., size=7)('corr_coeff')
+        if "noauto" in option:
+          orf = infer_orf_npinterp_noauto(corr_coeff=corr_coeff)
+        else:
+          orf = infer_orf_npinterp(corr_coeff=corr_coeff)
+        if "skyscr" in option:
+          gwb = FourierBasisSkyscrambledGP(gwb_pl, orf, components=nfreqs,
+                                           name=gwname+'_skyscr',
+                                           Tspan=self.params.Tspan)
+        else:
+          gwb = gp_signals.FourierBasisCommonGP(gwb_pl, orf, components=nfreqs,
+                                                name=gwname,
+                                                Tspan=self.params.Tspan)
+      else:
+        gwb = gp_signals.FourierBasisGP(gwb_pl, components=nfreqs,
+                                        name='gwb', Tspan=self.params.Tspan)
+      if 'gwb_total' in locals():
+        gwb_total += gwb
+      else:
+        gwb_total = gwb
+
+    return gwb_total
+
 # PPTA DR2 signal models
 
 @signal_base.function
@@ -251,6 +393,75 @@ def f2_waveform(toas, pepoch, coeff=1e-6):
     This error results in cubic trend in timing residuals.
     """
     return coeff * ((toas - pepoch)/const.yr)**3
+
+@parameter.function
+def hd_orf_noauto(pos1, pos2):
+    """Hellings & Downs spatial correlation function."""
+    if np.all(pos1 == pos2):
+        return 0
+    else:
+        omc2 = (1 - np.dot(pos1, pos2)) / 2
+        return 1.5 * omc2 * np.log(omc2) - 0.25 * omc2 + 0.5
+
+@parameter.function
+def infer_orf(pos1, pos2, corr_coeff=np.zeros(7)):
+    """
+    Approximation of spatial correlations at seven angles, with borders at
+    30 degrees.
+    """
+    if np.all(pos1 == pos2):
+        return 1.
+    else:
+        eta = np.arccos(np.dot(pos1, pos2))
+        idx = np.round( eta / np.pi * 180/30.).astype(int)
+        return corr_coeff[idx]
+
+@parameter.function
+def infer_orf_noauto(pos1, pos2, corr_coeff=np.zeros(7)):
+    """
+    Approximation of spatial correlations at seven angles, with borders at
+    30 degrees.
+    """
+    if np.all(pos1 == pos2):
+        return 0.
+    else:
+        eta = np.arccos(np.dot(pos1, pos2))
+        idx = np.round( eta / np.pi * 180/30.).astype(int)
+        return corr_coeff[idx]
+
+@parameter.function
+def infer_orf_npinterp(pos1, pos2, corr_coeff=np.zeros(7)):
+    """
+    Approximation of spatial correlations at seven angles, with borders at
+    30 degrees, with linear interpolation in between.
+    """
+    if np.all(pos1 == pos2):
+        return 1.
+    else:
+        eta = np.arccos(np.dot(pos1, pos2))
+        xp = np.linspace(0, np.pi, len(corr_coeff))
+        return np.interp(eta, xp, corr_coeff)
+
+@parameter.function
+def infer_orf_npinterp_noauto(pos1, pos2, corr_coeff=np.zeros(7)):
+    """
+    Approximation of spatial correlations at seven angles, with borders at
+    30 degrees, with linear interpolation in between.
+    """
+    if np.all(pos1 == pos2):
+        return 0.
+    else:
+        eta = np.arccos(np.dot(pos1, pos2))
+        xp = np.linspace(0, np.pi, len(corr_coeff))
+        return np.interp(eta, xp, corr_coeff)
+
+@parameter.function
+def halfdip_orf(pos1, pos2):
+    """Dipole spatial correlation function times 0.5."""
+    if np.all(pos1 == pos2):
+        return 1 + 1e-5
+    else:
+        return np.dot(pos1, pos2)*0.5
 
 # PPTA DR2 signal wrappers
 

@@ -1,0 +1,1 @@
+This is the same data as in dr2_timing, but with J0437-4715 only containing -group PDFB_10CM, PDFB_20CM, PDFB_40CM and CASPSR_40CM. New .par file was created after re-fitting with tempo2 several times.
