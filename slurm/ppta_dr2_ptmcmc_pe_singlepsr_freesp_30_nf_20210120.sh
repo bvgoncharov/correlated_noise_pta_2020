@@ -3,9 +3,9 @@
 #SBATCH --output=/fred/oz002/bgoncharov/correlated_noise_logs/ppta_ptmcmc_pe_singlepsr_freesp_30_nf_%A_%a.out
 #SBATCH --ntasks=4
 #SBATCH --time=0-23
-#SBATCH --mem-per-cpu=3G
+#SBATCH --mem-per-cpu=4G
 #SBATCH --tmp=6G
-#SBATCH --array=0,4,10,20,24-25
+#SBATCH --array=0
 
 pyv="$(python -c 'import sys; print(sys.version_info[0])')"
 if [ "$pyv" == 2 ]

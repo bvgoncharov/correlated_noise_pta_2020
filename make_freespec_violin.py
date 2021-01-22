@@ -42,15 +42,16 @@ class ViolinFreespecResult(EnterpriseWarpResult):
 
   def make_figure(self, ax, label='Factorized posterior', facecolor='orange', 
                   edgecolor=None, alpha=0.3, linewidth=1, bw_method=None,
-                  df = 2.2292808626385243e-09, yval='log10_rho'):
+                  df = 2.2292808626385243e-09, yval='log10_rho', widthdf=1.):
     freqs = np.arange(df, (np.sum(self.par_mask) + 0.1)*df, df)
     if yval=='log10_rho':
       fobj = ax.violinplot(self.chain_burn[:,self.par_mask], positions=freqs, \
-                           widths=df, showextrema=False, bw_method=bw_method)
+                           widths=widthdf*df, showextrema=False, \
+                           bw_method=bw_method)
     elif yval=='log10_psd':
       fobj = ax.violinplot(2.*self.chain_burn[:,self.par_mask] - np.log10(df), \
-                           positions=freqs, widths=df, showextrema=False, \
-                           bw_method=bw_method)
+                           positions=freqs, widths=widthdf*df, \
+                           showextrema=False, bw_method=bw_method)
     for pc in fobj['bodies']:
       pc.set_facecolor(facecolor)
       pc.set_edgecolor(edgecolor)

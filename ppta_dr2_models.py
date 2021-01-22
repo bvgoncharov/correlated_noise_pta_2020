@@ -196,7 +196,8 @@ class PPTADR2Models(StandardModels):
       ekw['d_jupiter_mass'] = parameter.Normal(0, 1.54976690e-11)\
                                               ('d_jup_mass')
     if "jup_el" in option or "outer" in option or "default" in option:
-      if isinstance(option, dict) and type(option['jup_el']) is list:
+      if isinstance(option, dict) and (type(option['jup_el']) is list or \
+                                       type(option['jup_el']) is np.ndarray):
         ekw['jup_orb_elements'] = UniformMask(-0.05, 0.05, option['jup_el'])\
                                              ('jup_oe')
       else:
