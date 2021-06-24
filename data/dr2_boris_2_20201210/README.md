@@ -1,1 +1,0 @@
-J0437 data from dr2_timing, only with PDFB1_10CM, PDFB_10CM, PDFB_40CM, CASPSR_40CM, CPSR2_50CM.
