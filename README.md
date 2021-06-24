@@ -1,9 +1,11 @@
 # Search for the nanohertz stochastic gravitational-wave background with PPTA DR2
 
 This repository contains the code to reproduce results of the search for a stochastic gravitational-wave background with the second data release (DR2) of the Parkes Pulsar Timing Array (PPTA).
- - "run_analysis.py" is the main script to run parameter estimation and model selection.
- - "params" contains confguration files for parameter estimation and/or model selection, priors, output directories, etc. 
- - "slurm" contains slurm submission scripts, with examples of how to launch "run\_analysis.py" from the command line.
+ - `run_analysis.py` is the main script to run parameter estimation and model selection.
+ - `params/` contains confguration files for parameter estimation and/or model selection, priors, output directories, etc. 
+ - `slurm/` contains slurm submission scripts, with examples of how to launch "run\_analysis.py" from the command line.
+
+The code is based on [enterprise_warp](https://github.com/bvgoncharov/enterprise_warp/). It also requires a custom fork of `enterprise_extensions`, with some minor modifications.
 
 ## Citation
 
