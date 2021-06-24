@@ -62,7 +62,7 @@ plt.rcParams.update({
   #"font.serif": ["Palatino"],
 })
 font = {'family' : 'serif',
-        'size'   : 12}
+        'size'   : 17}
 #plt.style.use('seaborn-white')
 fig = plt.figure()
 axes = fig.add_subplot(111)

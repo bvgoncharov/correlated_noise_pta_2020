@@ -33,6 +33,7 @@ class PPTADR2Models(StandardModels):
       "event_j2145_t0": [56100., 56500.],
       "event_j1603_t0": [53710., 54070.],
       "f2_range": 1e-6,
+      "gwb_gamma_prior": "uniform",
     })
 
   def dm_annual(self, option="default"):
@@ -275,11 +276,18 @@ class PPTADR2Models(StandardModels):
         elif self.params.gwb_lgA_prior == "linexp":
           gwb_log10_A = parameter.LinearExp(self.params.gwb_lgA[0],
                                             self.params.gwb_lgA[1])(amp_name)
+        elif self.params.gwb_lgA_prior == "normal":
+          gwb_log10_A = parameter.Normal(mu=self.params.gwb_lgA[0],
+                                         sigma=self.params.gwb_lgA[1])(amp_name)
 
         gam_name = '{}_gamma'.format(name)
         if "vary_gamma" in option:
-          gwb_gamma = parameter.Uniform(self.params.gwb_gamma[0],
-                                        self.params.gwb_gamma[1])(gam_name)
+          if self.params.gwb_gamma_prior == "uniform":
+            gwb_gamma = parameter.Uniform(self.params.gwb_gamma[0],
+                                          self.params.gwb_gamma[1])(gam_name)
+          if self.params.gwb_gamma_prior == "normal":
+            gwb_gamma = parameter.Normal(sigma=self.params.gwb_gamma[1],
+                                         mu=self.params.gwb_gamma[0])(gam_name)
         elif "fixed_gamma" in option:
           gwb_gamma = parameter.Constant(4.33)(gam_name)
         else:
@@ -534,6 +542,8 @@ def by_B_1020CM(flags):
     return {'1020CM': sel_10b + sel_20b}
 
 # Custom priors
+
+
 
 #def UniformMaskPrior(value, pmin, pmax, mask):
 #    """Prior function for Uniform parameters."""

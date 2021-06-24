@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --job-name=de421_ptmcmc_pe_cpl_varsl_30nf_setall_eph0
-#SBATCH --output=/fred/oz002/bgoncharov/correlated_noise_logs/de421_ptmcmc_pe_cpl_varslope_30_nf_set_all_ephem_0_%A_%a.out
+#SBATCH --job-name=de430_ptmcmc_pe_cpl_varsl_30nf_setall_eph0
+#SBATCH --output=/fred/oz002/bgoncharov/correlated_noise_logs/de430_ptmcmc_pe_cpl_varslope_30_nf_set_all_ephem_0_%A_%a.out
 #SBATCH --ntasks=4
 #SBATCH --time=1-11
 #SBATCH --mem-per-cpu=8G
@@ -16,4 +16,4 @@ fi
 
 srun echo $TEMPO2
 srun echo $TEMPO2_CLOCK_DIR
-srun python /home/bgonchar/correlated_noise_pta_2020/run_analysis.py --prfile "/home/bgonchar/correlated_noise_pta_2020/params/ppta_dr2_de421_pe_common_pl_vargam_30_nf_set_all_ephem_0_20210114.dat" --num $SLURM_ARRAY_TASK_ID
+srun python /home/bgonchar/correlated_noise_pta_2020/run_analysis.py --prfile "/home/bgonchar/correlated_noise_pta_2020/params/ppta_dr2_de430_pe_common_pl_vargam_30_nf_set_all_ephem_0_20210114.dat" --num $SLURM_ARRAY_TASK_ID

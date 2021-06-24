@@ -50,15 +50,22 @@ class FactorizedPosteriorResult(EnterpriseWarpResult):
       self.psrs_set_name = ''
 
   def main_pipeline(self, prior, prior_type='uniform', inc_psrs=None,
-                    plot_results=True):
-    if prior_type=='uniform':
+                    plot_results=True, plot_psrs=True):
+    if prior_type=='uniform' and np.array(prior).shape==(2,):
       self.x_vals = np.linspace(prior[0], prior[1], 1000)[:, np.newaxis]
+    elif prior_type=='uniform' and np.array(prior).shape!=(2,):
+      x_val_list = (np.linspace(pr[0], pr[1], 1000) for pr in prior)
+      mg = np.meshgrid(*x_val_list)
+      self.x_vals = np.vstack((mgx.flatten() for mgx in mg)).T
 
     self.collect_kde(inc_psrs=inc_psrs)
     self.calculate_factorized_posterior()
 
     if plot_results:
       self.plot_results()
+
+    if plot_psrs:
+      self.plot_psrs()
 
   def collect_kde(self, preload=True, inc_psrs=None):
 
@@ -93,10 +100,10 @@ class FactorizedPosteriorResult(EnterpriseWarpResult):
                             estimation, not model selection).')
   
         self._get_par_mask()
-        if np.sum(self.par_mask) != 1:
-          message = 'Here, --par must correspond only to one parameter. \
-                     Current --par: ' + ','.join(self.opts.par)
-          raise ValueError(message)
+        #if np.sum(self.par_mask) != 1:
+        #  message = 'Here, --par must correspond only to one parameter. \
+        #             Current --par: ' + ','.join(self.opts.par)
+        #  raise ValueError(message)
   
         self.get_distribution_kde()
         self.get_sd_bayes_factor()
@@ -151,13 +158,32 @@ class FactorizedPosteriorResult(EnterpriseWarpResult):
 
   def make_figure(self, ax, label='Factorized posterior', colorpsr='grey', 
                   colorall='dodgerblue', lwpsr=1, lwall=2, alphapsr=0.1,
-                  alphaall=1.0):
-    for psr_dir in self.kde.keys():
-      fobj = ax.plot(self.x_vals, np.exp(self.log_prob[psr_dir]),
-                     alpha=alphapsr, color=colorpsr, linewidth=lwpsr)
-    fobj += ax.plot(self.x_vals, self.prob_factorized_norm, color=colorall,
-                    alpha=alphaall, linewidth=lwall, label=label)
+                  alphaall=1.0, only_total=False):
+    if not only_total:
+      for psr_dir in self.kde.keys():
+        fobj = ax.plot(self.x_vals, np.exp(self.log_prob[psr_dir]),
+                       alpha=alphapsr, color=colorpsr, linewidth=lwpsr)
+      fobj += ax.plot(self.x_vals, self.prob_factorized_norm, color=colorall,
+                      alpha=alphaall, linewidth=lwall, label=label)
+    else:
+      fobj = ax.plot(self.x_vals, self.prob_factorized_norm, color=colorall,
+                     alpha=alphaall, linewidth=lwall, label=label)
     return fobj
+
+  def plot_psrs(self, alphapsr=1., colorpsr='r', lwpsr=1., ymin=1e-12, ymax=8.):
+    for psr_dir in self.kde.keys():
+      plt.plot(self.x_vals, np.exp(self.log_prob[psr_dir]),
+               alpha=alphapsr, color=colorpsr, linewidth=lwpsr, label=psr_dir)
+      plt.xlim([-17,-12])
+      plt.ylim([ymin, ymax])
+      plt.yscale("log")
+      plt.legend()
+      plt.xlabel('$\log_{10}A$')
+      plt.ylabel('Posterior probability')
+      plt.tight_layout()
+      plt.savefig(self.outdir_all + 'kde_posterior_gw_' + \
+                  psr_dir + '.png')
+      plt.close()
 
   def plot_results(self):
     fig, axes = plt.subplots()
@@ -181,7 +207,7 @@ def main():
   The pipeline script
   """
   opts = parse_commandline()
-  psrs_set = '/home/bgonchar/correlated_noise_pta_2020/params/pulsar_set_x_1.dat'
+  psrs_set = '/home/bgonchar/correlated_noise_pta_2020/params/pulsar_set_all.dat'
   result_obj = FactorizedPosteriorResult(opts, psrs_set=psrs_set)
   #inc_psrs = ['20_J1909-3744','0_J0437-4715','24_J2145-0750','11_J1603-7202','5_J1024-0719','23_J2129-5721','22_J2124-3358','10_J1600-3053']
   result_obj.main_pipeline([-20., -6.])#, inc_psrs=inc_psrs)

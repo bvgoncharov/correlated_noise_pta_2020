@@ -17,8 +17,12 @@ result = [
 '/home/bgonchar/correlated_noise_pta_2020/params/ppta_dr2_ptmcmc_pe_cpl_freesp_30_nf_set_all_ephem_0_20201222.dat',
 '/home/bgonchar/correlated_noise_pta_2020/params/ppta_dr2_ptmcmc_pe_cpl_freesp_30_nf_set_x_1_ephem_0_20201015.dat',
 ]
+load_separated = [
+1,
+0,
+]
 par = [
-['gw_log10_rho'],
+['rho'],
 ['gw_log10_rho'],
 ]
 nmodel = [
@@ -60,20 +64,26 @@ opts = parse_commandline()
 opts.__dict__['logbf'] = True
 
 #plt.style.use('seaborn-white')
-fig = plt.figure()
-axes = fig.add_subplot(111)
+
 font = {'family' : 'serif',
-        'size'   : 12}
-#plt.rcParams.update({
-#  "text.usetex": True,
-#  "text.latex.unicode": True,
-#  "font.family": "serif",
-#  #"font.serif": ["Palatino"],
-#})
+        'size'   : 17}
+# [!!!] Add plt.rcParams.update only before axes/fig is created!
+plt.rcParams.update({
+  "text.usetex": True,
+  #"text.latex.unicode": True,
+  "font.family": "serif",
+  #"font.serif": ["Palatino"],
+})
+
+#fig = plt.figure()
+#axes = fig.add_subplot(111)
+fig, axes = plt.subplots()
+
 count_order = 0
-for rr, pp, nm, ll, fc, ec, lw, al, aa, df in zip(result, par, nmodel, labels, facecolors, edgecolors, linewidths, alphas, angles, dfs):
+for rr, pp, nm, ll, fc, ec, lw, al, aa, df, ls in zip(result, par, nmodel, labels, facecolors, edgecolors, linewidths, alphas, angles, dfs, load_separated):
   opts.__dict__['result'] = rr
   opts.__dict__['par'] = pp
+  opts.__dict__['load_separated'] = ls
 
   result_obj = ViolinFreespecResult(opts)
   result_obj.main_pipeline(plot=False)
@@ -96,21 +106,33 @@ for rr, pp, nm, ll, fc, ec, lw, al, aa, df in zip(result, par, nmodel, labels, f
   #axes.violinplot(values, positions=aa, widths=np.sum(aa)/len(aa)/3, showextrema=False)
   #plt.hist(values, bins=20, density=True, histtype='stepfilled', alpha=0.5, facecolor=cc, hatch=hh, edgecolor=cc, label = ll)
 
-#plt.ylabel('$\\log_{10}(\\rho\\mathrm{[s]})$')
-plt.ylabel('$\\log_{10}(P\\mathrm{[s}^3\\mathrm{]})$')
-plt.xlabel('$\\mathrm{Frequency,~[Hz]}$')
+xf = np.linspace(1e-9,7e-8,10)
 AA = 2.2e-15
 gamma = 13./3.
-xf = np.linspace(1e-9,7e-8,10)
 #plt.plot(xf, np.log10(np.sqrt(powerlaw_psd(xf,AA,gamma)*df)))
-plt.plot(xf, np.log10(powerlaw_psd(xf,AA,gamma)), color='black')
+axes.plot(xf, np.log10(powerlaw_psd(xf,AA,gamma)), color='black')
+
+axes.set_xlabel('$\\mathrm{Frequency~[Hz]}$', fontdict=font)
+axes.set_ylabel('$\\log_{10}(P\\mathrm{[s}^3\\mathrm{]})$', fontdict=font)
+plt.xticks(ticks=[1e-9, 1e-8],labels=["$10^{-9}$","$10^{-8}$"])
+#axes.xaxis.grid(True, which='minor') # add for minor grid ticks on X-axis
+plt.yticks(ticks=[-10,-8,-6,-4,-2],labels=["$-10$","$-8$","$-6$","$-4$","$-2$"])
+axes.tick_params(axis='y', labelsize = font['size'])
+axes.tick_params(axis='x', labelsize = font['size'])
+
+#plt.ylabel('$\\log_{10}(\\rho\\mathrm{[s]})$')
+#plt.ylabel('$\\log_{10}(P\\mathrm{[s}^3\\mathrm{]})$')
+#plt.xlabel('$\\mathrm{Frequency,~[Hz]}$')
 #axes.set_xlabel('$\\mathrm{Frequency~[Hz]}$', fontdict=font)
-#axes.set_ylabel('$\\log_{10}(\\rho\\mathrm{[s]})$', fontdict=font)
+#axes.set_ylabel('$\\log_{10}(P\\mathrm{[s}^3\\mathrm{]})$', fontdict=font)
 plt.xlim([xf[0],xf[-1]])
 #plt.ylim([1e-6, 8])
 #plt.yscale("log")
 #plt.legend()
 axes.set_xscale('log')
+#plt.xticks(ticks=[1e-9, 1e-8],labels=["$10^{-9}$","$10^{-8}$"])
+##axes.xaxis.grid(True, which='minor') # add for minor grid ticks on X-axis
+#plt.yticks(ticks=[-10,-8,-6,-4,-2],labels=["$-10$","$-8$","$-6$","$-4$","$-2$"])
 #axes.tick_params(axis='y', labelsize = font['size'])
 #axes.tick_params(axis='x', labelsize = font['size'])
 plt.grid(b=None)
