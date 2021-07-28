@@ -5,7 +5,9 @@ This repository contains the code to reproduce results of the search for a stoch
  - `params/` contains confguration files for parameter estimation and/or model selection, priors, output directories, etc. 
  - `slurm/` contains slurm submission scripts, with examples of how to launch "run\_analysis.py" from the command line.
 
-The code is based on [enterprise_warp](https://github.com/bvgoncharov/enterprise_warp/). It also requires a custom fork of `enterprise_extensions`, with some minor modifications.
+## Dependencies
+
+The code is based on [enterprise_warp](https://github.com/bvgoncharov/enterprise_warp/). It was used with `Python 3.6`, `bilby-1.1.1`. It also requires a custom fork of `enterprise_extensions`, with some minor modifications.
 
 ## Citation
 
