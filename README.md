@@ -14,7 +14,7 @@ The code is based on [enterprise_warp](https://github.com/bvgoncharov/enterprise
 ## Citation
 
 > @misc{goncharov2021evidence,\
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;title={On the evidence for a common-spectrum process in the search for the nanohertz gravitational wave background with the Parkes Pulsar Timing Array},\
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;title={On the evidence for a common-spectrum process in the search for the nanohertz gravitational-wave background with the Parkes Pulsar Timing Array},\
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;author={Boris Goncharov and R. M. Shannon and D. J. Reardon and G. Hobbs and A. Zic and M. Bailes and M. Curylo and S. Dai and M. Kerr and M. E. Lower and R. N. Manchester and R. Mandow and H. Middleton and M. T. Miles and A. Parthasarathy and E. Thrane and N. Thyagarajan and X. Xue and X. J. Zhu and A. D. Cameron and Y. Feng and R. Luo and C. J. Russell and J. Sarkissian and R. Spiewak and S. Wang and J. B. Wang and L. Zhang and S. Zhang},\
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;journal = {\apjl},\
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;year={2021},\
