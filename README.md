@@ -15,7 +15,7 @@ The code is based on [enterprise_warp](https://github.com/bvgoncharov/enterprise
 
 You are welcome to use posterior samples for the common-spectrum process, for `log10_A_gw` and `gamma_gw`. This repository contains samples for Figure 1, left, from the publication. For the solid blue contour. The samples are split between the two `.txt` files in `/publication_figures/`.
 
-![The common-spectrum process: power-law parameters](https://github.com/bvgoncharov/correlated_noise_pta_2020/blob/master/publication_figures/chain_common_process_plot.jpg "The common-spectrum process: power-law parameters (arXiv: 2107.12112)")
+![The common-spectrum process and spatial correlations](https://github.com/bvgoncharov/correlated_noise_pta_2020/blob/master/publication_figures/illustration.jpg "The common-spectrum process and spatial correlations (arXiv: 2107.12112)")
 
 ## Citation
 
