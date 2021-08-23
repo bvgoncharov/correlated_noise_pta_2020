@@ -13,7 +13,7 @@ The code is based on [enterprise_warp](https://github.com/bvgoncharov/enterprise
 
 ## Posterior samples for the common-spectrum process
 
-You are welcome to use posterior samples for the common-spectrum process, for `log10_A_gw` and `gamma_gw`. This repository contains samples for Figure 1, left, from the publication. For the solid blue contour. The samples are split between the two `.txt` files in `/publication_figures/`.
+This repository contains posterior samples outlining our measurement of the amplitude, `log10_A_gw`, and the power-law index, `gamma_gw`, of the common-spectrum process. It also contains posterior samples for our constraints on spatial correlation coefficients at different angles between pulsar pairs. The samples are in `.txt` files in `/publication_figures/`, for the common-spectrum process two files should be merged into one. 
 
 ![The common-spectrum process and spatial correlations](https://github.com/bvgoncharov/correlated_noise_pta_2020/blob/master/publication_figures/illustration.jpg "The common-spectrum process and spatial correlations (arXiv: 2107.12112)")
 
