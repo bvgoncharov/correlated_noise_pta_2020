@@ -13,43 +13,42 @@ def hd_orf(eta):
 # What results to grab
 output_directory = '/home/bgonchar/correlated_noise_pta_2020/publication_figures/'
 result = [
-'/home/bgonchar/correlated_noise_pta_2020/params/ppta_dr2_ptmcmc_pe_gwb_fixslope_interp_orf_30_nf_set_all_ephem_0_20201218.dat',
+#'/home/bgonchar/correlated_noise_pta_2020/params/ppta_dr2_ptmcmc_pe_gwb_fixslope_interp_orf_30_nf_set_all_ephem_0_20201218.dat',
 '/home/bgonchar/correlated_noise_pta_2020/params/ppta_dr2_ptmcmc_pe_gwb_fixslope_interp_orf_set_x_1_ephem_0_20201105.dat',
-#'/home/bgonchar/correlated_noise_pta_2020/params/ppta_dr2_ptmcmc_pe_gwb_fixslope_interp_orf_20_nf_set_x_1_skyscr_1_20201202.dat',
 ]
 par = [
-['corr_coeff'],
+#['corr_coeff'],
 ['corr_coeff'],
 ]
 nmodel = [
-0,
+#0,
 0,
 ]
 labels = [
-"ORF",
+#"ORF",
 "x1"
 #"Sky-scrambled",
 ]
 colors = [
-"white",
+#"white",
 "#E53935",
 #"#F39C12",
 #"#E39C12"
 ]
 edgecolors = [
-"#795548",
+#"#795548",
 "#E53935",
 ]
 angles = [
-np.linspace(0, np.pi,7),
+#np.linspace(0, np.pi,7),
 np.linspace(0, np.pi,7),
 ]
 linewidths = [
-2,
+#2,
 0,
 ]
 alphas = [
-1.0,
+#1.0,
 0.5
 ]
 
@@ -101,8 +100,9 @@ plt.ylim([-1, 1])
 axes.tick_params(axis='y', labelsize = font['size'])
 axes.tick_params(axis='x', labelsize = font['size'])
 plt.grid(b=None)
+plt.grid(False)
 plt.tight_layout()
-plt.savefig(output_directory + 'orf.pdf')
+plt.savefig(output_directory + 'orf_x_1.pdf')
 plt.close()
 
 import ipdb; ipdb.set_trace()
