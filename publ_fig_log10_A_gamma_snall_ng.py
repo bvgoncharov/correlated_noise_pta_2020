@@ -39,7 +39,8 @@ linestyles = [
 ":",
 "--",
 "-",
-"-."
+"-.", # NG
+"-.", # EPTA
 ]
 shade = [
 True,
@@ -47,6 +48,7 @@ False,
 False,
 True,
 False, # NG
+False, # EPTA
 ]
 shade_alpha = [
 0.4,
@@ -54,12 +56,14 @@ shade_alpha = [
 0.0,
 0.5,
 0.0, # NG
+0.0, # EPTA
 ]
 linewidths = [
 1.0,
 0.5,
 0.5,
 1.0,
+1.0, #NG
 1.0, #NG
 ]
 colors = [
@@ -68,6 +72,7 @@ colors = [
 "#1976D2",
 "#1976D2",
 "orange", #"#FFB300", #NG
+"#27AB37", #"#FFB300", #EPTA
 ]
 extents=[[2.0, 7.0], [-16.0, -13.8]]
 
@@ -99,12 +104,17 @@ dirr = '/fred/oz002/rshannon/ng_compare/'
 ngchain = np.loadtxt(dirr+'ng.dat')
 cc.add_chain(ngchain[:,1:], parameters=["$\\gamma$","$\\log_{10}A$"], name="NANOGrav")
 
+# Adding EPTA
+dirr = '/fred/oz031/pta_data/chains_epta_dr2/'
+eptachain = np.loadtxt(dirr+'chain_1.txt')[:,-6:-4]
+cc.add_chain(eptachain, parameters=["$\\gamma$","$\\log_{10}A$"], name="EPTA")
+
 cc.configure(summary=False, linestyles=linestyles, linewidths=linewidths,
              shade=shade, bar_shade=shade, shade_alpha=shade_alpha, serif=True,
              legend_color_text=False, legend_artists=False, colors=colors)
              # legend_kwargs={"loc": "best"}, legend_location=(0, 0)
 plt.rcParams['axes.grid'] = False
-cfig = cc.plotter.plot(extents=extents, filename=output_directory+'log10_A_gamma_snall_ng.pdf', truth={"$\\gamma$": 13./3.})
+cfig = cc.plotter.plot(extents=extents, filename=output_directory+'log10_A_gamma_snall_ng_epta.pdf', truth={"$\\gamma$": 13./3.})
 
 #plt.vlines(np.log10(1.9e-15), ymin, ymax, linestyles="dotted", colors="black", label="NANOGrav 12.5-yr CPL")
 #plt.xlabel('$\log_{10}A$')
