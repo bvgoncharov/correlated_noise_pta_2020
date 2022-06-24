@@ -38,7 +38,7 @@ def calculate_dropout_factors(x_vals, log_prob_k, log_prob_jnek, bf_k,
     integrand[psr] = np.exp(log_prob_k[psr] + log_prob_jnek[psr]) / prior
     dropout[psr] = trapz(integrand[psr], x=x_vals.T)
     #dropout[psr] = simps(integrand, x=x_vals[:,0])
-    #dropout[psr] = dropout[psr] * bf_k[psr][0]
+    dropout[psr] = dropout[psr] * bf_k[psr][0]
   if return_integrand:
     return dropout, integrand
   else:
@@ -49,9 +49,11 @@ def main():
   The pipeline script
   """
   opts = parse_commandline()
-  output_directory = '/home/bgonchar/correlated_noise_pta_2020/publication_figures/'
+  #output_directory = '/home/bgonchar/correlated_noise_pta_2020/publication_figures/'
+  output_directory = '/fred/oz031/pta_gwb_priors_out/sim/20220303_efac_cp_factorz_220208_073559/'
   #psrs_set = '/home/bgonchar/correlated_noise_pta_2020/params/pulsar_set_x_1.dat'
-  psrs_set = '/home/bgonchar/correlated_noise_pta_2020/params/pulsar_set_all.dat'
+  #psrs_set = '/home/bgonchar/correlated_noise_pta_2020/params/pulsar_set_all.dat'
+  psrs_set = '/fred/oz031/pta_gwb_priors_out/sim_data/pulsar_set_all.dat'
 
   plt.rcParams.update({
     "text.usetex": True,
@@ -63,7 +65,8 @@ def main():
 
   # Factorized results per pulsar
   #opts.result = '/home/bgonchar/correlated_noise_pta_2020/params/ppta_dr2_ptmcmc_wnfix_pe_common_pl_factorized_20200916.dat'
-  opts.result ='/home/bgonchar/correlated_noise_pta_2020/params/ppta_dr2_snall_wnfix_pe_common_pl_factorized_30_nf_20210126.dat'
+  #opts.result ='/home/bgonchar/correlated_noise_pta_2020/params/ppta_dr2_snall_wnfix_pe_common_pl_factorized_30_nf_20210126.dat'
+  opts.result = '/home/bgonchar/pta_gwb_priors/params/factorized_one_sim_rnqcp_220208_073559_wnfix_pe_cpl_20220406.dat'
   result_obj = FactorizedPosteriorResult(opts, psrs_set=psrs_set)
   result_obj.main_pipeline([-20., -6.], plot_psrs=False)
   bf_k = result_obj.sd_bf
@@ -72,12 +75,17 @@ def main():
 
   # Factorized results for all PSRs in set except each one, one by one
   #opts.result = '/home/bgonchar/correlated_noise_pta_2020/params/ppta_dr2_ptmcmc_pe_cpl_set_x_1_factorized_dropout_20201105.dat'
-  opts.result = '/home/bgonchar/correlated_noise_pta_2020/params/ppta_dr2_snall_pe_cpl_30_nf_set_all_factorized_dropout_20210126.dat'
+  #opts.result = '/home/bgonchar/correlated_noise_pta_2020/params/ppta_dr2_snall_pe_cpl_30_nf_set_all_factorized_dropout_20210126.dat'
+  opts.result = '/home/bgonchar/pta_gwb_priors/params/factorized_all_sim_rnqcp_220208_073559_pe_cpl_20220406.dat'
   result_obj = FactorizedPosteriorResult(opts, psrs_set=psrs_set)
   result_obj.main_pipeline([-20., -6.], plot_psrs=False)
   log_prob_jnek = result_obj.log_prob
   #if not x_vals == result_obj.x_vals:
   #  raise ValueError('Different x-vals')
+  import ipdb; ipdb.set_trace()
+  del log_prob_jnek['24_psr']
+  del log_prob_jnek['2_psr'] 
+  for key_false, key_true in zip(sorted(log_prob_jnek.keys()), sorted(log_prob_k.keys())): log_prob_jnek[key_true] = log_prob_jnek[key_false]
 
   dropout = calculate_dropout_factors(x_vals, log_prob_k, log_prob_jnek, bf_k)
   dropout_keys = list()

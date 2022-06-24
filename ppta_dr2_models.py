@@ -15,7 +15,7 @@ from enterprise_warp.enterprise_models import StandardModels
 from enterprise_warp.enterprise_models import selection_factory
 from enterprise_warp.enterprise_models import powerlaw_bpl
 
-from scramble_basis import FourierBasisCommonGP as FourierBasisSkyscrambledGP
+#from scramble_basis import FourierBasisCommonGP as FourierBasisSkyscrambledGP
 
 class PPTADR2Models(StandardModels):
   """

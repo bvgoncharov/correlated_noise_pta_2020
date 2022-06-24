@@ -77,8 +77,8 @@ class FactorizedPosteriorResult(EnterpriseWarpResult):
       print('Pre-loaded KDEs')
     else:
       print('Calculating KDEs')
+      # self.psr_dirs = ['0_psr','11_psr','13_psr','15_psr','17_psr','19_psr','20_psr','22_psr','24_psr','2_psr','4_psr','6_psr','8_psr','10_psr','12_psr','14_psr','16_psr','18_psr','1_psr','21_psr','23_psr','25_psr','3_psr','5_psr','7_psr','9_psr'] # For dropping one pulsar at a time, output directories became strange
       for psr_dir in self.psr_dirs:
-
         if psr_dir.split('_')[1] not in self.allowed_psrs:
           print('Skipping ', psr_dir, ', it is not in set ', self.psrs_set_name)
           continue
@@ -207,7 +207,7 @@ def main():
   The pipeline script
   """
   opts = parse_commandline()
-  psrs_set = '/home/bgonchar/correlated_noise_pta_2020/params/pulsar_set_all.dat'
+  psrs_set = '/fred/oz031/pta_gwb_priors_out/sim_data/pulsar_set_all.dat' #'/home/bgonchar/correlated_noise_pta_2020/params/pulsar_set_all.dat'
   result_obj = FactorizedPosteriorResult(opts, psrs_set=psrs_set)
   #inc_psrs = ['20_J1909-3744','0_J0437-4715','24_J2145-0750','11_J1603-7202','5_J1024-0719','23_J2129-5721','22_J2124-3358','10_J1600-3053']
   result_obj.main_pipeline([-20., -6.])#, inc_psrs=inc_psrs)
